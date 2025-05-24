@@ -39,11 +39,10 @@
       transform: scale(1.2);
     }
 
-    .cover-photo {
+    .cover-photo img {
       width: 100%;
       height: 200px;
-      background: url('https://files.catbox.moe/y9d7eb.jpg') no-repeat center center;
-      background-size: cover;
+      object-fit: cover;
     }
 
     .profile-icon-container {
@@ -52,14 +51,13 @@
       margin-top: -50px;
     }
 
-    .profile-icon {
+    .profile-icon img {
       width: 100px;
       height: 100px;
-      background: url('https://files.catbox.moe/ak38r9.jpg') no-repeat center center;
-      background-size: cover;
       border-radius: 50%;
       border: 3px solid white;
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      object-fit: cover;
     }
 
     .container {
@@ -121,11 +119,15 @@
   <button class="btn-dark-mode" id="toggleMode">🌙</button>
 
   <!-- Cover Photo -->
-  <div class="cover-photo"></div>
+  <div class="cover-photo">
+    <img src="https://files.catbox.moe/y9d7eb.jpg" alt="Cover Photo" />
+  </div>
 
   <!-- Profile Icon -->
   <div class="profile-icon-container">
-    <div class="profile-icon"></div>
+    <div class="profile-icon">
+      <img src="https://files.catbox.moe/ak38r9.jpg" alt="Profile Icon" />
+    </div>
   </div>
 
   <!-- Main Container -->
@@ -160,7 +162,6 @@
           </tr>
         </thead>
         <tbody id="cdrData">
-          <!-- Sample data row -->
           <tr>
             <td>Incoming</td>
             <td>923000000000</td>
@@ -175,9 +176,9 @@
     </div>
 
     <footer class="text-center mt-6">
-      <div class="mb-2">
-        <button onclick="window.open('https://whatsapp.com/channel/0029VadE4Ay9mrGm2rCfvD2h', '_blank')" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 btn mr-2">Join WhatsApp Channel</button>
-        <button onclick="window.open('https://t.me/techgrofficial', '_blank')" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 btn">Join Telegram Channel</button>
+      <div class="mb-2 flex flex-col sm:flex-row justify-center gap-3 px-2">
+        <button onclick="window.open('https://whatsapp.com/channel/0029VadE4Ay9mrGm2rCfvD2h', '_blank')" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full sm:w-auto btn">Join WhatsApp Channel</button>
+        <button onclick="window.open('https://t.me/techgrofficial', '_blank')" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full sm:w-auto btn">Join Telegram Channel</button>
       </div>
       <p class="text-sm text-white">© 2025 TECH GR OFFICIAL. All rights reserved.</p>
     </footer>
@@ -190,13 +191,12 @@
 
     function generateCDR() {
       document.getElementById('loading').style.display = 'block';
-
       setTimeout(() => {
         document.getElementById('loading').style.display = 'none';
         const cdrTable = document.getElementById('cdrTable');
         cdrTable.classList.remove('hidden');
-        cdrTable.style.display = 'block'; // Ensure it's visible
-      }, 1500); // Simulated delay
+        cdrTable.style.display = 'block';
+      }, 1500);
     }
 
     function downloadPDF() {
