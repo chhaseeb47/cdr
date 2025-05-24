@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GR CDR DATABASE</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { transition: all 0.3s ease; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(145deg, #1a1a1a, #333333);
+      color: white;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    .dark-mode {
+      background: linear-gradient(145deg, #000000, #222222);
+    }
+
+    .btn-dark-mode {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: white;
+    }
+
+    .btn-dark-mode:hover {
+      transform: scale(1.2);
+    }
+
+    .cover-photo {
+      width: 100%;
+      height: 200px;
+      background: url('https://files.catbox.moe/y9d7eb.jpg') no-repeat center center;
+      background-size: cover;
+    }
+
+    .profile-icon-container {
+      display: flex;
+      justify-content: center;
+      margin-top: -50px;
+    }
+
+    .profile-icon {
+      width: 100px;
+      height: 100px;
+      background: url('https://files.catbox.moe/ak38r9.jpg') no-repeat center center;
+      background-size: cover;
+      border-radius: 50%;
+      border: 3px solid white;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      border-radius: 15px;
+      border: 2px solid #e2e8f0;
+      padding: 2rem;
+      margin-top: 2rem;
+    }
+
+    .btn {
+      transition: transform 0.2s ease, background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+    }
+
+    #cdrTable {
+      background-color: #000 !important;
+      color: #fff !important;
+      padding: 1rem;
+      border-radius: 10px;
+    }
+
+    #cdrTable table {
+      background-color: #111;
+      color: white;
+    }
+
+    #cdrTable th {
+      background-color: #222;
+      color: white;
+    }
+
+    #cdrTable td {
+      color: white;
+      border-color: #444;
+    }
+
+    #loading {
+      display: none;
+      font-size: 18px;
+      color: cyan;
+      margin-top: 10px;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-start relative">
+
+  <!-- Dark Mode Button -->
+  <button class="btn-dark-mode" id="toggleMode">🌙</button>
+
+  <!-- Cover Photo -->
+  <div class="cover-photo"></div>
+
+  <!-- Profile Icon -->
+  <div class="profile-icon-container">
+    <div class="profile-icon"></div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="max-w-5xl w-full container">
+    <div class="p-4">
+      <label for="phoneNumber" class="block text-lg font-medium text-gray-800 mb-2">Enter Phone Number:</label>
+      <input type="text" id="phoneNumber" placeholder="e.g., 92324355017" class="border p-3 rounded w-full mb-4 text-black" />
+      <label for="timePeriod" class="block text-lg font-medium text-gray-800 mb-2">Select Period:</label>
+      <select id="timePeriod" class="border p-3 rounded w-full mb-4 text-black">
+        <option value="1">1 Month</option>
+        <option value="3">3 Months</option>
+        <option value="6">6 Months</option>
+      </select>
+      <button onclick="generateCDR()" class="bg-blue-600 text-white p-3 rounded w-full hover:bg-blue-700 btn">Generate CDR</button>
+    </div>
+
+    <div id="loading">
+      <p>Searching CDR... Please wait</p>
+    </div>
+
+    <div id="cdrTable" class="mt-6 hidden">
+      <h2 id="cdrHeader" class="text-xl font-semibold mb-4">Call Detail Records</h2>
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr>
+            <th>Call Type</th>
+            <th>A-Party</th>
+            <th>B-Party</th>
+            <th>Date and Time</th>
+            <th>Duration (sec)</th>
+            <th>Cell ID</th>
+          </tr>
+        </thead>
+        <tbody id="cdrData">
+          <!-- Sample data row -->
+          <tr>
+            <td>Incoming</td>
+            <td>923000000000</td>
+            <td>923123456789</td>
+            <td>2025-05-01 10:00:00</td>
+            <td>120</td>
+            <td>12345</td>
+          </tr>
+        </tbody>
+      </table>
+      <button onclick="downloadPDF()" class="mt-6 bg-green-600 text-white p-3 rounded w-full hover:bg-green-700 btn">Download Full CDR as PDF</button>
+    </div>
+
+    <footer class="text-center mt-6">
+      <div class="mb-2">
+        <button onclick="window.open('https://whatsapp.com/channel/0029VadE4Ay9mrGm2rCfvD2h', '_blank')" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 btn mr-2">Join WhatsApp Channel</button>
+        <button onclick="window.open('https://t.me/techgrofficial', '_blank')" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 btn">Join Telegram Channel</button>
+      </div>
+      <p class="text-sm text-white">© 2025 TECH GR OFFICIAL. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById('toggleMode').addEventListener('click', function () {
+      document.body.classList.toggle('dark-mode');
+    });
+
+    function generateCDR() {
+      document.getElementById('loading').style.display = 'block';
+
+      setTimeout(() => {
+        document.getElementById('loading').style.display = 'none';
+        const cdrTable = document.getElementById('cdrTable');
+        cdrTable.classList.remove('hidden');
+        cdrTable.style.display = 'block'; // Ensure it's visible
+      }, 1500); // Simulated delay
+    }
+
+    function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.autoTable({ html: '#cdrTable table' });
+      doc.save("CDR_Report.pdf");
+    }
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+</body>
+</html>
